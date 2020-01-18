@@ -29,6 +29,7 @@ import os
 import shutil 
 import csv
 import sys
+import pandas as pd
 
 def convert(imgf, labelf, outf, n):
     f = open(imgf, "rb")
@@ -53,7 +54,8 @@ def convert(imgf, labelf, outf, n):
 
 def changing_columns(filename):
 
-    newFile = "new_" + filename 
+    newFile = "new_" + filename
+    newFinalFile = "last_" + filename
 
     if os.path.isfile(newFile):
         os.remove(newFile)
@@ -72,9 +74,17 @@ def changing_columns(filename):
                     writer = csv.writer(file)
                     writer.writerow(new_row)
 
-    shutil.copyfile(newFile, homeDirectory+'/'+filename)
-    os.remove(newFile)
     os.remove(filename)
+
+    df = pd.read_csv(newFile, header=None)
+    ds = df.sample(frac=1).reset_index(drop=True)
+    ds.to_csv(newFinalFile, header=False, index=False)
+    os.remove(newFile)
+
+    shutil.copyfile(newFinalFile, homeDirectory+'/'+filename)
+    os.remove(newFinalFile)
+    
+    
 
 def main():
 
@@ -82,7 +92,7 @@ def main():
     nTestMax = 20500
     nTrain = 100000  #By default the number of lines will be the maximum one
     nTest = 20000    #By default the number of lines will be the maximum one
-    
+
     if len(sys.argv) > 3:
     	print("Insert only 2 arguments (the number of TrainLines and TestLines)")
     	sys.exit()
