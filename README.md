@@ -10,6 +10,9 @@
 
 3. Lunch the jupyter notebook "subject.ipynb"
 
---------------------------ATENTION!---------------------------------
+--------------------------ATENTION!--------------------
+
 After changing the program, before using the github project, please delete the database (files ".csv" produced in the main folder) and the binary files unzipped in the first step!
---------------------------------------------------------------------
+
+-------------------------------------------------------
+
