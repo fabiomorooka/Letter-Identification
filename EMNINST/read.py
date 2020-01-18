@@ -90,12 +90,12 @@ def main():
 
     nTrainMax = 120000
     nTestMax = 20500
-    nTrain = 100000  #By default the number of lines will be the maximum one
-    nTest = 20000    #By default the number of lines will be the maximum one
+    nTrain = nTrainMax  #By default the number of lines will be the maximum one
+    nTest = nTestMax    #By default the number of lines will be the maximum one
 
     if len(sys.argv) > 3:
-        print("Insert only 2 arguments (the number of TrainLines and TestLines)")
-        sys.exit()
+    	print("Insert only 2 arguments (the number of TrainLines and TestLines)")
+    	sys.exit()
 
     if os.path.isfile("emnist-letters/emnist-letters-train-images-idx3-ubyte") and os.path.isfile("emnist-letters/emnist-letters-train-labels-idx1-ubyte") and os.path.isfile("emnist-letters/emnist-letters-test-images-idx3-ubyte") and os.path.isfile("emnist-letters/emnist-letters-test-labels-idx1-ubyte"):
         print("All 4 binary files are in the EMNIST folder")
@@ -106,15 +106,15 @@ def main():
     if len(sys.argv) <= 3 and len(sys.argv) > 1:
         if len(sys.argv) == 3:
             nTest = int(sys.argv[2])
-        nTrain = int(sys.argv[1])
+    	nTrain = int(sys.argv[1])
 
     if (nTrain > nTrainMax):
         print("The number of training lines is higher than the maximum one, setting to the maximum value")
-        nTrain = nTrainMax
+    	nTrain = nTrainMax
     
     if (nTest > nTestMax):
         print("The number of testing lines is higher than the maximum one, setting to the maximum value")
-        nTest = nTestMax
+    	nTest = nTestMax
 
     global trainFile, testFile, homeDirectory
 
