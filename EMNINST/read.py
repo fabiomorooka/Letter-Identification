@@ -58,7 +58,7 @@ def changing_columns(filename):
     if os.path.isfile(newFile):
         os.remove(newFile)
     else:
-        print newFile + " does not exist, so creating one"
+        print(newFile + " does not exist, so creating one")
 
     with open(filename, 'r') as csvfile:
         spamreader = csv.reader(csvfile, delimiter = ',', quotechar = '|', quoting = csv.QUOTE_NONNUMERIC)
@@ -84,13 +84,13 @@ def main():
     nTest = 20000    #By default the number of lines will be the maximum one
     
     if len(sys.argv) > 3:
-    	print "Insert only 2 arguments (the number of TrainLines and TestLines)"
+    	print("Insert only 2 arguments (the number of TrainLines and TestLines)")
     	sys.exit()
 
     if os.path.isfile("emnist-letters/emnist-letters-train-images-idx3-ubyte") and os.path.isfile("emnist-letters/emnist-letters-train-labels-idx1-ubyte") and os.path.isfile("emnist-letters/emnist-letters-test-images-idx3-ubyte") and os.path.isfile("emnist-letters/emnist-letters-test-labels-idx1-ubyte"):
-        print "All 4 binary files are in the EMNIST folder"
+        print("All 4 binary files are in the EMNIST folder")
     else:
-        print "Verify that all 4 binary files are in the EMNIST folder!"
+        print("Verify that all 4 binary files are in the EMNIST folder!")
         sys.exit()
         
     if len(sys.argv) <= 3 and len(sys.argv) > 1:
@@ -99,11 +99,11 @@ def main():
     	nTrain = int(sys.argv[1])
 
     if (nTrain > nTrainMax):
-        print "The number of training lines is higher than the maximum one, setting to the maximum value"
+        print("The number of training lines is higher than the maximum one, setting to the maximum value")
     	nTrain = nTrainMax
     
     if (nTest > nTestMax):
-        print "The number of testing lines is higher than the maximum one, setting to the maximum value"
+        print("The number of testing lines is higher than the maximum one, setting to the maximum value")
     	nTest = nTestMax
 
     global trainFile, testFile, homeDirectory
@@ -113,32 +113,32 @@ def main():
     homeDirectory = os.path.split(os.getcwd())[0]
 
     if os.path.isfile(homeDirectory + '/' + trainFile):
-        print "Deleting " + trainFile
+        print("Deleting " + trainFile)
         os.remove(homeDirectory + '/' + trainFile)
 
     if os.path.isfile(homeDirectory + '/' + testFile):
-        print "Deleting " + testFile
+        print("Deleting " + testFile)
         os.remove(homeDirectory + '/' + testFile)
 
-    print "Creating train dataset with " + str(nTrain) + " lines"
+    print("Creating train dataset with " + str(nTrain) + " lines")
     convert("emnist-letters/emnist-letters-train-images-idx3-ubyte", "emnist-letters/emnist-letters-train-labels-idx1-ubyte",
         trainFile, nTrain)
-    print "Finished train dataset"
+    print( "Finished train dataset")
 
-    print "Changing columns train file and moving it"
+    print("Changing columns train file and moving it")
     changing_columns(trainFile)
-    print "Finished changing columns and moving it"
+    print( "Finished changing columns and moving it")
 
-    print "Creating test dataset with " + str(nTest) + " lines"
+    print("Creating test dataset with " + str(nTest) + " lines")
     convert("emnist-letters/emnist-letters-test-images-idx3-ubyte", "emnist-letters/emnist-letters-test-labels-idx1-ubyte",
         testFile, nTest)
-    print "Finished test dataset"
+    print("Finished test dataset")
 
-    print "Changing columns test file and moving it"
+    print("Changing columns test file and moving it")
     changing_columns(testFile)
-    print "Finished changing columns and moving it"
+    print( "Finished changing columns and moving it")
 
-    print "Finished program"
+    print("Finished program")
 
 if __name__ == "__main__":
     main()
