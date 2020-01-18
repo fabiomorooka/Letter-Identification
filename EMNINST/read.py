@@ -87,7 +87,7 @@ def main():
     	print "Insert only 2 arguments (the number of TrainLines and TestLines)"
     	sys.exit()
 
-    if os.path.isfile("emnist-letters-train-images-idx3-ubyte") and os.path.isfile("emnist-letters-train-labels-idx1-ubyte") and os.path.isfile("emnist-letters-test-images-idx3-ubyte") and os.path.isfile("emnist-letters-test-labels-idx1-ubyte"):
+    if os.path.isfile("emnist-letters/emnist-letters-train-images-idx3-ubyte") and os.path.isfile("emnist-letters/emnist-letters-train-labels-idx1-ubyte") and os.path.isfile("emnist-letters/emnist-letters-test-images-idx3-ubyte") and os.path.isfile("emnist-letters/emnist-letters-test-labels-idx1-ubyte"):
         print "All 4 binary files are in the EMNIST folder"
     else:
         print "Verify that all 4 binary files are in the EMNIST folder!"
@@ -121,7 +121,7 @@ def main():
         os.remove(homeDirectory + '/' + testFile)
 
     print "Creating train dataset with " + str(nTrain) + " lines"
-    convert("emnist-letters-train-images-idx3-ubyte", "emnist-letters-train-labels-idx1-ubyte",
+    convert("emnist-letters/emnist-letters-train-images-idx3-ubyte", "emnist-letters/emnist-letters-train-labels-idx1-ubyte",
         trainFile, nTrain)
     print "Finished train dataset"
 
@@ -130,7 +130,7 @@ def main():
     print "Finished changing columns and moving it"
 
     print "Creating test dataset with " + str(nTest) + " lines"
-    convert("emnist-letters-test-images-idx3-ubyte", "emnist-letters-test-labels-idx1-ubyte",
+    convert("emnist-letters/emnist-letters-test-images-idx3-ubyte", "emnist-letters/emnist-letters-test-labels-idx1-ubyte",
         testFile, nTest)
     print "Finished test dataset"
 
