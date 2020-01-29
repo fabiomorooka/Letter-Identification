@@ -30,6 +30,8 @@ import sys
 import pandas as pd
 import numpy as np
 import math
+import zipfile
+import shutil
 
 def remove_file(filename):
     if os.path.isfile(filename):
@@ -37,6 +39,17 @@ def remove_file(filename):
         os.remove(filename)
     else:
         print(filename + "file does not exist, creating one!")
+
+def remove_folder(foldername):
+    if os.path.isdir(foldername):
+        print("Removing " + foldername)
+        shutil.rmtree(foldername)
+    else:
+        print(foldername + " folder does not exist, creating one!")
+
+def unzipEMNIST(unzipFolder):
+    with zipfile.ZipFile('./emnist-letters.zip', 'r') as zip_file:
+        zip_file.extractall(unzipFolder)
 
 def readBinaryFile(imgf, labelf, n):
     f = open(imgf, "rb")
@@ -75,7 +88,7 @@ def separeteDatasets(dataset, perc):
     letters = range(1,27)
 
     print("Percentage of the testset: " + str(perc))
-    print("Percentage of the validationset: " + str(1-perc) + "\n")
+    print("Percentage of the validationset: " + str(1-perc))
 
     for letter in letters:
         dl = dataset.loc[dataset[784] == letter]
@@ -93,34 +106,39 @@ def separeteDatasets(dataset, perc):
             df_test = df_test.append(df_percTest)
             df_validation = df_validation.append(df_percValidation)
 
+    print("Number of letters in the testset: " + str(len(df_test)))
+    print("Number of letters in the validationset: " + str(len(df_validation)))
+
     ds_test = df_test.sample(frac=1).reset_index(drop = True) 
     ds_validation = df_validation.sample(frac=1).reset_index(drop = True)  
  
-    remove_file('./../classificatorAnalysis/test.npy')
+    remove_file('./../test.npy')
     print("Creating test database\n")
-    np.save('./../classificatorAnalysis/test', ds_test.to_numpy())
-    np.save('./../createdClassificatorAlgorithm/test', ds_test.to_numpy())
+    np.save('./../test', ds_test.to_numpy())
     
-    remove_file('./../classificatorAnalysis/validation.npy')
-    print("Creating validation database\n")
-    np.save('./../classificatorAnalysis/validation', ds_validation.to_numpy())
-    np.save('./../createdClassificatorAlgorithm/validation', ds_validation.to_numpy())
-
+    remove_file('./../validation.npy')
+    print("Creating validation database")
+    np.save('./../validation', ds_validation.to_numpy())
+    
 def main():
 
     nTrain = 120000  #By default the number of lines will be the maximum one
     nTest = 20500    #By default the number of lines will be the maximum one
 
+    EMNIST_zip_file = "./emnist-letters.zip"
+    final_folder = "./emnist-letters"
     train_images_file = "./emnist-letters/emnist-letters-train-images-idx3-ubyte"
     train_labels_file = "./emnist-letters/emnist-letters-train-labels-idx1-ubyte"
     test_images_file = "./emnist-letters/emnist-letters-test-images-idx3-ubyte"
     test_labels_file = "./emnist-letters/emnist-letters-test-labels-idx1-ubyte"
 
-    if os.path.isfile(train_images_file) and os.path.isfile(train_labels_file) and os.path.isfile(test_images_file) and os.path.isfile(test_labels_file):
-        print("All 4 binary files are in the EMNIST folder")
-    else:
-        print("Verify that all 4 binary files are in the EMNIST folder!")
+    if not(os.path.isfile(EMNIST_zip_file)):
+        print("Verify that the EMNIST zip file is in the folder!")
         sys.exit()
+    elif not(os.path.isdir(final_folder)):
+        print("Extracting all binary files...")
+        unzipEMNIST(final_folder)
+        print("Finished unzipping file\n")
         
     proportion_trainset = raw_input('How much do you want to use as trainset?\n')
     while(float(proportion_trainset) <= 0):
@@ -128,28 +146,30 @@ def main():
         proportion_trainset = raw_input('Try again: how much do you want to use as trainset?\n')  
     
     if float(proportion_trainset) > 1:
-        print("Converting in percentage\n")
+        print("Converting in percentage...")
         proportion_trainset = (float(proportion_trainset) / 100)
+        print("Proportion is: " + str(proportion_trainset) + " \n")
     elif float(proportion_trainset) >= 0 and float(proportion_trainset) <= 1:
         pass
 
-    print("Creating train dataset with " + str(nTrain) + " lines...")
+    print("Creating train dataset with " + str(nTrain) + " letters...")
     train_list = readBinaryFile(train_images_file, train_labels_file, nTrain)
     train_df = randomizeDataset(train_list)
 
-    remove_file('./../classificatorAnalysis/train.npy')
-    print("Creating train database\n")
-    np.save('./../classificatorAnalysis/train', train_df.to_numpy())
-    np.save('./../createdClassificatorAlgorithm/train', train_df.to_numpy())
-
+    remove_file('./../train.npy')
+    print("Creating train database...")
+    np.save('./../train', train_df.to_numpy())
     print( "Finished train dataset\n")
 
-    print("Creating test dataset with " + str(nTest) + " lines...")
+    print("Creating test and validation dataset with " + str(nTest) + " letters...")
     test_list = readBinaryFile(test_images_file, test_labels_file, nTest)
     test_df = randomizeDataset(test_list) 
     separeteDatasets(test_df, float(proportion_trainset))
-    print("Finished test dataset\n")
+    print("Finished creating test and validation dataset\n")
     
+    print("Deleting folder with all binary files...")
+    remove_folder(final_folder)
+    print("Folder deleted!\n")
     
     print("Finished program")
 
