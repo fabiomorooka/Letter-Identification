@@ -35,7 +35,15 @@ def euclidean_distance(row1, row2):
         distance += (row1[i] - row2[i])**2
     
     return sqrt(distance)
- 
+
+# calculate the Manhattan distance between two vectors
+def manhattan_distance(row1, row2):
+    distance = 0.0
+    for i in range(len(row1)-1):
+        distance += abs((row1[i] - row2[i]))
+    
+    return distance 
+
 # Locate the most similar neighbors
 def get_neighbors(train, test_row, num_neighbors):
     distances = list()
