@@ -33,6 +33,7 @@ import math
 import zipfile
 import shutil
 
+# This function verify if a file exists and if so it will remove it.
 def remove_file(filename):
     if os.path.isfile(filename):
         print("Removing " + filename)
@@ -40,6 +41,7 @@ def remove_file(filename):
     else:
         print(filename + "file does not exist, creating one!")
 
+# This function verify if a folder exists and if so it will remove it.
 def remove_folder(foldername):
     if os.path.isdir(foldername):
         print("Removing " + foldername)
@@ -47,10 +49,13 @@ def remove_folder(foldername):
     else:
         print(foldername + " folder does not exist, creating one!")
 
+# This function unzip the EMNIST letters database zip folder in a specific folder.
+# The unzipped files are binary files of the database
 def unzipEMNIST(unzipFolder):
     with zipfile.ZipFile('./emnist-letters.zip', 'r') as zip_file:
         zip_file.extractall(unzipFolder)
 
+# This function reads the binary files and return the letters (28x28 pixels) with its labbel in the first column. (so 785 values per letter)
 def readBinaryFile(imgf, labelf, n):
     f = open(imgf, "rb")
     l = open(labelf, "rb")
@@ -70,6 +75,7 @@ def readBinaryFile(imgf, labelf, n):
 
     return images
 
+# This function randomize a list of letters and return a pandas DataFrame. 
 def randomizeDataset(imagesList):
     image_list = []
     for row in imagesList:
@@ -84,6 +90,7 @@ def randomizeDataset(imagesList):
 
     return ds
 
+# This function deparete a dataset in two: the test dataset and the validation dataset.
 def separeteDatasets(dataset, perc):
     letters = range(1,27)
 
@@ -120,10 +127,12 @@ def separeteDatasets(dataset, perc):
     print("Creating validation database")
     np.save('./../validation', ds_validation.to_numpy())
     
-def main():
+# This is the main function of this program.    
+def main(argv):
 
-    nTrain = 120000  #By default the number of lines will be the maximum one
-    nTest = 20500    #By default the number of lines will be the maximum one
+	# Initialization of the variables.
+    nTrain = 120000  # By default the number of lines will be the maximum one
+    nTest = 20500    # By default the number of lines will be the maximum one
 
     EMNIST_zip_file = "./emnist-letters.zip"
     final_folder = "./emnist-letters"
@@ -132,6 +141,7 @@ def main():
     test_images_file = "./emnist-letters/emnist-letters-test-images-idx3-ubyte"
     test_labels_file = "./emnist-letters/emnist-letters-test-labels-idx1-ubyte"
 
+    # Some cheking if the files are in the coorect folder.
     if not(os.path.isfile(EMNIST_zip_file)):
         print("Verify that the EMNIST zip file is in the folder!")
         sys.exit()
@@ -140,7 +150,8 @@ def main():
         unzipEMNIST(final_folder)
         print("Finished unzipping file\n")
         
-    proportion_trainset = raw_input('How much do you want to use as trainset?\n')
+    # Verifiy if the percentage passed in the first argument is a good argument.
+    proportion_trainset = argv[0]
     while(float(proportion_trainset) <= 0):
         print("\nPercentage must be positive!")
         proportion_trainset = raw_input('Try again: how much do you want to use as trainset?\n')  
@@ -152,21 +163,25 @@ def main():
     elif float(proportion_trainset) >= 0 and float(proportion_trainset) <= 1:
         pass
 
+    # Create the train dataset
     print("Creating train dataset with " + str(nTrain) + " letters...")
     train_list = readBinaryFile(train_images_file, train_labels_file, nTrain)
     train_df = randomizeDataset(train_list)
 
+    # Save the train dataset in a ".npy" file
     remove_file('./../train.npy')
     print("Creating train database...")
     np.save('./../train', train_df.to_numpy())
     print( "Finished train dataset\n")
 
+  	# Creating the test and validation dataset  
     print("Creating test and validation dataset with " + str(nTest) + " letters...")
     test_list = readBinaryFile(test_images_file, test_labels_file, nTest)
     test_df = randomizeDataset(test_list) 
     separeteDatasets(test_df, float(proportion_trainset))
     print("Finished creating test and validation dataset\n")
     
+    # Delete all binary unzipped files to reduce the size of the project
     print("Deleting folder with all binary files...")
     remove_folder(final_folder)
     print("Folder deleted!\n")
@@ -174,6 +189,6 @@ def main():
     print("Finished program")
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
 
 

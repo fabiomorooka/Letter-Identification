@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# kk.py --- K-Nearest Neighbours (KNN) algorithm
+# knn.py --- K-Nearest Neighbours (KNN) algorithm
 
 # Copyright (c) 2011-2016  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
 

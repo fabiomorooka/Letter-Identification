@@ -12,7 +12,7 @@ Next, use the command "conda install -c conda-forge notebook" to install the not
 With pip, install with the command: "pip install jupyterlab"
 Next, use the command "pip install notebook" to install the notebook
 
-3. Run "generateDatabase.py" algorithm in the folder "EMNIST". This algorithm will unzip the EMNIST binary files and will read them and generate the ".npy" files. These files will be used as database to do the image classification.
+3. Run "generateDatabase.py" algorithm in the folder "EMNIST". This algorithm will unzip the EMNIST binary files and will read them and generate the ".npy" files. These files will be used as database to do the image classification. This algorithm must have one argument that is the proportion of the division in the train/validation dataset
 
 This project uses jupyter notebook to show the results and the algorithms.
 
