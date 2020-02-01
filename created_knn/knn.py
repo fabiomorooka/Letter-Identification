@@ -24,50 +24,65 @@
 # SOFTWARE.
 
 # code:
-import collections
+from math import sqrt
 import numpy as np
 
-
-def trainModel(train_x, train_y):
-    # do nothing 
-    return
-
-def predict(train_x, train_y, test_x, k):
-    # create list for distances and targets
-    distances = []
-    targets = []
-
-    for i in range(len(train_x)):
-        # first we compute the euclidean distance
-        distance = np.sqrt(np.sum(np.square(test_x - train_x[i])))
-        # add it to list of distances
-        distances.append([distance, i])
-
-    # sort the list
-    distances = sorted(distances)
-
-    # make a list of the k neighbors' targets
-    for i in range(k):
-        index = distances[i][1]
-        #print(y_train[index])
-        targets.append(train_y[index])
-
-    # return most common target
-    return collections.Counter(targets).most_common(1)[0][0]
-
-# K-Nearest Neighbours algorithm
-def kNearestNeighbor(train_x, train_y, test_x, test_y, k):
-    # check if k is not larger than n
-    if k > len(train_x):
-        raise ValueError
+ 
+# calculate the Euclidean distance between two vectors
+def euclidean_distance(row1, row2):
+    distance = 0.0
+    for i in range(len(row1)-1):
+        distance += (row1[i] - row2[i])**2
     
-    # train on the input data
-    trainModel(train_x, train_y)
+    return sqrt(distance)
+ 
+# Locate the most similar neighbors
+def get_neighbors(train, test_row, num_neighbors):
+    distances = list()
+    for train_row in train:
+        dist = euclidean_distance(test_row, train_row)
+        distances.append((train_row, dist))
+    distances.sort(key=lambda tup: tup[1])
+    neighbors = list()
+    for i in range(num_neighbors):
+        neighbors.append(distances[i][0])
+    
+    return neighbors
+ 
+# Make a classification prediction with neighbors
+def predict_classification(train, test_row, num_neighbors):
+    neighbors = get_neighbors(train, test_row, num_neighbors)
+    output_values = [row[-1] for row in neighbors]
+    prediction = max(set(output_values), key=output_values.count)
+    
+    return prediction
 
-    predictions = []
+def k_nearest_neighbors(train, test, num_neighbors):
+    predictions = list()
+    for row in test:
+        output = predict_classification(train, row, num_neighbors)
+        predictions.append(output)
+    
+    return(predictions)
+ 
 
-    # predict for each testing observation
-    for i in range(len(test_x)):
-        predictions.append(predict(train_x, train_y, test_x[i], k))
+# Test distance function
+def predict_letters(N, M):
+    print("Loading Train dataset...")
+    train_array = np.load('./../train.npy')
+    print("Train database has " + str(len(train_array)) + " letters")
+    print("Finished loading train dataset!\n")
 
-    return predictions
+    print("Loading Test dataset...")
+    test_array = np.load('./../test.npy')
+    print("Test database has " + str(len(test_array)) + " letters")
+    print("Finished loading test dataset!\n")
+
+    print("Loading Validation dataset...")
+    validation_array = np.load('./../validation.npy')
+    print("Validation database has " + str(len(validation_array)) + " letters")
+    print("Finished loading validation dataset!")
+
+    answer = k_nearest_neighbors(train_array[:N], validation_array[:M], 5)
+
+    return answer
