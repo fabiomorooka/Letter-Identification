@@ -90,38 +90,38 @@ def randomizeDataset(imagesList):
 
     return ds
 
-# This function deparete a dataset in two: the test dataset and the validation dataset.
+# This function deparete a dataset in two: the train dataset and the validation dataset.
 def separeteDatasets(dataset, perc):
     letters = range(1,27)
 
-    print("Percentage of the testset: " + str(perc))
+    print("Percentage of the trainset: " + str(perc))
     print("Percentage of the validationset: " + str(1-perc))
 
     for letter in letters:
         dl = dataset.loc[dataset[784] == letter]
 
-        test_letters = int(math.ceil(len(dl) * perc))
-        validation_letters = len(dl) - test_letters
+        train_letters = int(math.ceil(len(dl) * perc))
+        validation_letters = len(dl) - train_letters
 
-        df_percTest = dl.head(test_letters)
+        df_percTrain = dl.head(train_letters)
         df_percValidation = dl.tail(validation_letters)
         
         if letter == 1:
-            df_test = df_percTest
+            df_train = df_percTrain
             df_validation = df_percValidation
         else:
-            df_test = df_test.append(df_percTest)
+            df_train = df_train.append(df_percTrain)
             df_validation = df_validation.append(df_percValidation)
 
-    print("Number of letters in the testset: " + str(len(df_test)))
+    print("Number of letters in the trainset: " + str(len(df_train)))
     print("Number of letters in the validationset: " + str(len(df_validation)))
 
-    ds_test = df_test.sample(frac=1).reset_index(drop = True) 
+    ds_train = df_train.sample(frac=1).reset_index(drop = True) 
     ds_validation = df_validation.sample(frac=1).reset_index(drop = True)  
  
-    remove_file('./../test.npy')
-    print("Creating test database\n")
-    np.save('./../test', ds_test.to_numpy())
+    remove_file('./../train.npy')
+    print("Creating train database\n")
+    np.save('./../train', ds_train.to_numpy())
     
     remove_file('./../validation.npy')
     print("Creating validation database")
@@ -131,8 +131,8 @@ def separeteDatasets(dataset, perc):
 def main(argv):
 
 	# Initialization of the variables.
-    nTrain = 120000  # By default the number of lines will be the maximum one
-    nTest = 20500    # By default the number of lines will be the maximum one
+    nTrain = 124800  # By default the number of lines will be the maximum one
+    nTest = 20800    # By default the number of lines will be the maximum one
 
     EMNIST_zip_file = "./emnist-letters.zip"
     final_folder = "./emnist-letters"

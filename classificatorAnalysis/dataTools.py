@@ -126,7 +126,7 @@ class Dataset:
     def createLetters(self):
         letters = []
         for row in self.array:
-            letters.append(Digit(np.array(row[:-1]), row[-1]))
+            letters.append(Letter(np.array(row[:-1]), row[-1]))
         return letters
 
 # n : percent of the number of lines in the data base use as array set
@@ -138,10 +138,10 @@ def load_data_set(array, n):
 def cvt_obj_nparray(dataset):
     X = np.zeros((dataset.length, 12))
     Y = np.zeros((dataset.length,))
-    for i, digit in enumerate(dataset.letters):
-        Y[i] = digit.target
-        for j, feature in enumerate(digit.features):
-            X[i, j] = digit.features[feature]
+    for i, letter in enumerate(dataset.letters):
+        Y[i] = letter.target
+        for j, feature in enumerate(letter.features):
+            X[i, j] = letter.features[feature]
     return X, Y
 
 def create_data(filename, perc):
