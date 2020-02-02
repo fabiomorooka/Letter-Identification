@@ -45,10 +45,13 @@ def manhattan_distance(row1, row2):
     return distance 
 
 # Locate the most similar neighbors
-def get_neighbors(train, test_row, num_neighbors):
+def get_neighbors(train, test_row, num_neighbors = 5, norm = 'l2'):
     distances = list()
     for train_row in train:
-        dist = euclidean_distance(test_row, train_row)
+        if norm == 'l1':
+            dist = manhattan_distance(test_row, train_row)
+        elif norm == 'l2':
+            dist = euclidean_distance(test_row, train_row)
         distances.append((train_row, dist))
     distances.sort(key=lambda tup: tup[1])
     neighbors = list()
@@ -58,24 +61,24 @@ def get_neighbors(train, test_row, num_neighbors):
     return neighbors
  
 # Make a classification prediction with neighbors
-def predict_classification(train, test_row, num_neighbors):
-    neighbors = get_neighbors(train, test_row, num_neighbors)
+def predict_classification(train, test_row, num_neighbors, norm):
+    neighbors = get_neighbors(train, test_row, num_neighbors, norm)
     output_values = [row[-1] for row in neighbors]
     prediction = max(set(output_values), key=output_values.count)
     
     return prediction
 
-def k_nearest_neighbors(train, test, num_neighbors):
+def k_nearest_neighbors(train, test, num_neighbors, norm):
     predictions = list()
     for row in test:
-        output = predict_classification(train, row, num_neighbors)
+        output = predict_classification(train, row, num_neighbors, norm)
         predictions.append(output)
     
     return(predictions)
  
 
 # Test distance function
-def predict_letters(N, M):
+def predict_letters(N, M, norm):
     print("Loading Train dataset...")
     train_array = np.load('./../train.npy')
     print("Train database has " + str(len(train_array)) + " letters")
@@ -91,6 +94,6 @@ def predict_letters(N, M):
     print("Validation database has " + str(len(validation_array)) + " letters")
     print("Finished loading validation dataset!")
 
-    answer = k_nearest_neighbors(train_array[:N], validation_array[:M], 5)
+    answer = k_nearest_neighbors(train_array[:N], validation_array[:M], 5, norm)
 
     return answer

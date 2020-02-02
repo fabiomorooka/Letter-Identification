@@ -12,7 +12,7 @@ Next, use the command "conda install -c conda-forge notebook" to install the not
 With pip, install with the command: "pip install jupyterlab"
 Next, use the command "pip install notebook" to install the notebook
 
-3. Run "generateDatabase.py" algorithm in the folder "EMNIST". This algorithm will unzip the EMNIST binary files and will read them and generate the ".npy" files. These files will be used as database to do the image classification. This algorithm must have one argument that is the proportion of the division in the train/validation dataset
+3. To preparete the database that will be used in the study, run the bash file: "init.sh" that is located in the main folder.
 
 This project uses jupyter notebook to show the results and the algorithms.
 
@@ -30,9 +30,10 @@ This project uses jupyter notebook to show the results and the algorithms.
 
 	4.6. The file "svm.ipynb" analyse just the Support Vector Machine algorithm, its purpose is to analyse its hyperparameter to chose the best hyperparameter value and use it to classify the handwritten digits from the photos taken.
 
---------------------------ATENTION!--------------------
+------------------------------------------------------ATENTION!----------------------------------------
 
-After changing the program, before using the github project, please delete the database files (".npy" files)
+Before using the github project, please run the bash executable "remove.sh" located in the main folder! 
 
--------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+
 
