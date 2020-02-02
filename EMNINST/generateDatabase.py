@@ -163,23 +163,22 @@ def main(argv):
     elif float(proportion_trainset) >= 0 and float(proportion_trainset) <= 1:
         pass
 
-    # Create the train dataset
-    print("Creating train dataset with " + str(nTrain) + " letters...")
+    # Create the train dataset and validation dataset 
+    print("Creating train and validation dataset with " + str(nTrain) + " letters...")
     train_list = readBinaryFile(train_images_file, train_labels_file, nTrain)
     train_df = randomizeDataset(train_list)
+    separeteDatasets(train_df, float(proportion_trainset))
 
-    # Save the train dataset in a ".npy" file
-    remove_file('./../train.npy')
-    print("Creating train database...")
-    np.save('./../train', train_df.to_numpy())
-    print( "Finished train dataset\n")
-
-  	# Creating the test and validation dataset  
-    print("Creating test and validation dataset with " + str(nTest) + " letters...")
+  	# Creating the test  
+    print("Creating test with " + str(nTest) + " letters...")
     test_list = readBinaryFile(test_images_file, test_labels_file, nTest)
     test_df = randomizeDataset(test_list) 
-    separeteDatasets(test_df, float(proportion_trainset))
-    print("Finished creating test and validation dataset\n")
+   
+    # Save the test dataset in a ".npy" file
+    remove_file('./../test.npy')
+    print("Creating test database...")
+    np.save('./../test', test_df.to_numpy())
+    print( "Finished test dataset\n")
     
     # Delete all binary unzipped files to reduce the size of the project
     print("Deleting folder with all binary files...")
