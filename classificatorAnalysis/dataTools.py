@@ -162,6 +162,18 @@ def create_data(filename, perc):
 
     return X_array, Y_array
 
+def create_data_list(filename, perc):
+    #Load the database (.npy) files 
+    img_array = np.load(filename) 
+
+    print("Creating dataset...")
+    print("Number of the lines in the dataset: " + str(len(img_array))) 
+    data_set = load_data_set(img_array, perc)
+    print("Number of the lines in the dataset: " + str(data_set.length))
+    print ("\nFinished creating dataset\n")
+
+    return data_set
+
 def create_train_data(perc):
     print("Generating TRAIN data...")
     X_train, Y_train = create_data('./../train.npy', perc)
@@ -180,5 +192,20 @@ def create_validation_data(perc):
     
     return X_validation, Y_validation
 
+def create_train_data_list(perc):
+    print("Generating TRAIN data...")
+    train_list = create_data_list('./../train.npy', perc)
+    
+    return train_list
 
+def create_test_data_list(perc):
+    print("Generating TEST data...")
+    test_list = create_data_list('./../test.npy', perc)
+    
+    return test_list
 
+def create_validation_data_list(perc):
+    print("Generating VALIDATION data...")
+    validation_list = create_data_list('./../validation.npy', perc)
+    
+    return validation_list
