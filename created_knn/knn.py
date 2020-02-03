@@ -27,8 +27,12 @@
 from math import sqrt
 import numpy as np
 
- 
-# calculate the Euclidean distance between two vectors
+# Function to calculate the Euclidean distance between two vectors
+#
+# Parameters:
+# - row1 and row2: vectors of numbers that represent the object to be calculated
+# Return:
+# - The euclidean distance
 def euclidean_distance(row1, row2):
     distance = 0.0
     for i in range(len(row1)-1):
@@ -36,7 +40,13 @@ def euclidean_distance(row1, row2):
     
     return sqrt(distance)
 
-# calculate the Manhattan distance between two vectors
+# Function to calculate the Manhattan distance between two vectors
+#
+# Parameters:
+# - row1 and row2: vectors of numbers that represent the object to be calculated
+#
+# Return:
+# - The manhattan distance
 def manhattan_distance(row1, row2):
     distance = 0.0
     for i in range(len(row1)-1):
@@ -44,56 +54,62 @@ def manhattan_distance(row1, row2):
     
     return distance 
 
-# Locate the most similar neighbors
-def get_neighbors(train, test_row, num_neighbors = 5, norm = 'l2'):
+# Function that calculates the N neighbors closer to a specific object that will be classified
+#
+# Parameters:
+# - dataset: The entire dataset that is used to calculate the distance
+# - line: The vector that will be classified
+# - num_neighbors: The number of nearest neighbors (Default = 5)
+# - norm: The norm that will be used (Default = l2)
+#
+# Return:
+# - neighbors: a list of neighbors of a determinate object that will be classified 
+def get_neighbors(dataset, line, num_neighbors = 5, norm = 'l2'):
     distances = list()
-    for train_row in train:
+    for row in dataset:
         if norm == 'l1':
-            dist = manhattan_distance(test_row, train_row)
+            dist = manhattan_distance(line, row)
         elif norm == 'l2':
-            dist = euclidean_distance(test_row, train_row)
-        distances.append((train_row, dist))
+            dist = euclidean_distance(line, row)
+        distances.append((row, dist))
     distances.sort(key=lambda tup: tup[1])
     neighbors = list()
     for i in range(num_neighbors):
         neighbors.append(distances[i][0])
     
     return neighbors
- 
-# Make a classification prediction with neighbors
-def predict_classification(train, test_row, num_neighbors, norm):
-    neighbors = get_neighbors(train, test_row, num_neighbors, norm)
+
+# Function that predict the object.
+#
+# Parameters:
+# - dataset: The entire dataset that is used to calculate the distance
+# - line: The vector that will be classified
+# - num_neighbors: The number of nearest neighbors (Default = 5)
+# - norm: The norm that will be used (Default = l2)
+#
+# Return:
+# - prediction: the prediction label of the object that was classified
+def predict_classification(dataset, line, num_neighbors, norm):
+    neighbors = get_neighbors(dataset, line, num_neighbors, norm)
     output_values = [row[-1] for row in neighbors]
     prediction = max(set(output_values), key=output_values.count)
     
     return prediction
 
-def k_nearest_neighbors(train, test, num_neighbors, norm):
+# Function that predict a set of objects.
+#
+# Parameters:
+# - dataset: The entire dataset that is used to calculate the distance
+# - test: All objects that are going to be classified
+# - num_neighbors: The number of nearest neighbors (Default = 5)
+# - norm: The norm that will be used (Default = l2)
+#
+# Return:
+# - predictions: a list of the prediction label of each object that was classified
+def k_nearest_neighbors(dataset, test, num_neighbors, norm):
     predictions = list()
     for row in test:
-        output = predict_classification(train, row, num_neighbors, norm)
+        output = predict_classification(dataset, row, num_neighbors, norm)
         predictions.append(output)
     
     return(predictions)
- 
-
-# Test distance function
-def predict_letters(N, M, norm):
-    print("Loading Train dataset...")
-    train_array = np.load('./../train.npy')
-    print("Train database has " + str(len(train_array)) + " letters")
-    print("Finished loading train dataset!\n")
-
-    print("Loading Test dataset...")
-    test_array = np.load('./../test.npy')
-    print("Test database has " + str(len(test_array)) + " letters")
-    print("Finished loading test dataset!\n")
-
-    print("Loading Validation dataset...")
-    validation_array = np.load('./../validation.npy')
-    print("Validation database has " + str(len(validation_array)) + " letters")
-    print("Finished loading validation dataset!")
-
-    answer = k_nearest_neighbors(train_array[:N], validation_array[:M], 5, norm)
-
-    return answer
