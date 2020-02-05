@@ -91,8 +91,10 @@ def randomizeDataset(imagesList):
     return ds
 
 # This function deparete a dataset in two: the train dataset and the validation dataset.
-def separeteDatasets(dataset, perc):
+def separeteDatasets(dataset, perc, filter_coef):
     letters = range(1,27)
+    classesTrain_size = []
+    classesValidation_size = []
 
     print("Percentage of the trainset: " + str(perc))
     print("Percentage of the validationset: " + str(1-perc))
@@ -100,8 +102,14 @@ def separeteDatasets(dataset, perc):
     for letter in letters:
         dl = dataset.loc[dataset[784] == letter]
 
-        train_letters = int(math.ceil(len(dl) * perc))
-        validation_letters = len(dl) - train_letters
+        total_length = int(len(dl) * filter_coef)
+
+        train_letters = int(math.ceil(total_length * perc))
+        validation_letters = total_length - train_letters
+
+        classesTrain_size.append(train_letters)
+        classesValidation_size.append(validation_letters)
+
 
         df_percTrain = dl.head(train_letters)
         df_percValidation = dl.tail(validation_letters)
@@ -113,26 +121,78 @@ def separeteDatasets(dataset, perc):
             df_train = df_train.append(df_percTrain)
             df_validation = df_validation.append(df_percValidation)
 
-    print("Number of letters in the trainset: " + str(len(df_train)))
-    print("Number of letters in the validationset: " + str(len(df_validation)))
-
     ds_train = df_train.sample(frac=1).reset_index(drop = True) 
     ds_validation = df_validation.sample(frac=1).reset_index(drop = True)  
- 
+    
+    print("------------------[TRAIN DATASET]-----------------------")
+    print("Number of letters in the trainset: " + str(len(df_train)))
+    balance_train = len(set(classesTrain_size))
+    if balance_train == 1:
+        print("\nClasses are BALANCED!, with " + str(classesTrain_size[0]) + " sample for class\n")
+    else:
+        print("\nClasses are UNBALANCED!\n")    
+
     remove_file('./../train.npy')
     print("Creating train database\n")
     np.save('./../train', ds_train.to_numpy())
+    print("--------------------------------------------------------")
     
+    print("------------------[VALIDATION DATASET]------------------")
+    print("Number of letters in the validationset: " + str(len(df_validation)))
+    balance_validation = len(set(classesValidation_size))
+    if balance_validation == 1:
+        print("\nClasses are BALANCED!, with " + str(classesValidation_size[0]) + " sample for class\n")
+    else:
+        print("\nClasses are UNBALANCED!\n")
+
     remove_file('./../validation.npy')
     print("Creating validation database")
     np.save('./../validation', ds_validation.to_numpy())
+    print("--------------------------------------------------------")
+
+# This function deparete a dataset in two: the train dataset and the validation dataset.
+def reduceDataset(dataset, filter_coef):
+    letters = range(1,27)
+    classesTest_size = []
+
+    for letter in letters:
+        dl = dataset.loc[dataset[784] == letter]
+
+        test_letters = int(len(dl) * filter_coef)        
+        classesTest_size.append(test_letters)
+        df_percTest = dl.head(test_letters)
+        
+        if letter == 1:
+            df_test = df_percTest
+        else:
+            df_test = df_test.append(df_percTest)
+
+    print("------------------[TEST DATASET]-----------------------")
+    print("Number of letters in the testset: " + str(len(df_test)))
+
+    balance = len(set(classesTest_size))
+    if balance == 1:
+        print("\nClasses are BALANCED!, with " + str(classesTest_size[0]) + " sample for each class\n")
+    else:
+        print("\nClasses are UNBALANCED!\n")
+    
+    ds_test = df_test.sample(frac=1).reset_index(drop = True) 
+   
+    # Save the test dataset in a ".npy" file
+    remove_file('./../test.npy')
+    print("Creating test database...")
+    np.save('./../test', ds_test.to_numpy())
+    print( "Finished test dataset\n")
+    print("--------------------------------------------------------")
+
     
 # This is the main function of this program.    
 def main(argv):
 
 	# Initialization of the variables.
     nTrain = 124800  # By default the number of lines will be the maximum one
-    nTest = 20800    # By default the number of lines will be the maximum one
+    nTest = 20800    # By default the number of lines will be the maximum one 
+    coef = 0.125      # This is a coefficient to aquire less classes from the database
 
     EMNIST_zip_file = "./emnist-letters.zip"
     final_folder = "./emnist-letters"
@@ -164,22 +224,17 @@ def main(argv):
         pass
 
     # Create the train dataset and validation dataset 
-    print("Creating train and validation dataset with " + str(nTrain) + " letters...")
+    print("Creating train and validation dataset with " + str(nTrain) + " letters...\n")
     train_list = readBinaryFile(train_images_file, train_labels_file, nTrain)
     train_df = randomizeDataset(train_list)
-    separeteDatasets(train_df, float(proportion_trainset))
+    separeteDatasets(train_df, float(proportion_trainset), coef)
 
   	# Creating the test  
-    print("Creating test with " + str(nTest) + " letters...")
+    print("Creating test with " + str(nTest) + " letters...\n")
     test_list = readBinaryFile(test_images_file, test_labels_file, nTest)
-    test_df = randomizeDataset(test_list) 
-   
-    # Save the test dataset in a ".npy" file
-    remove_file('./../test.npy')
-    print("Creating test database...")
-    np.save('./../test', test_df.to_numpy())
-    print( "Finished test dataset\n")
-    
+    test_df = randomizeDataset(test_list)
+    reduceDataset(test_df, coef) 
+       
     # Delete all binary unzipped files to reduce the size of the project
     print("Deleting folder with all binary files...")
     remove_folder(final_folder)
