@@ -192,7 +192,7 @@ def main(argv):
 	# Initialization of the variables.
     nTrain = 124800  # By default the number of lines will be the maximum one
     nTest = 20800    # By default the number of lines will be the maximum one 
-    coef = 0.125      # This is a coefficient to aquire less classes from the database
+    coef = 0.0625      # This is a coefficient to aquire less classes from the database
 
     EMNIST_zip_file = "./emnist-letters.zip"
     final_folder = "./emnist-letters"

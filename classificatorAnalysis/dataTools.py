@@ -174,23 +174,33 @@ def create_data_list(filename, perc):
 
     return data_set
 
-def create_train_data(perc):
+#Function that normalize the features
+def normalize(arr):
+    max_line = np.max(arr, axis=0)
+    min_line = np.min(arr, axis=0)
+    
+    arr = (arr - min_line) / (max_line - min_line)
+    
+    return arr
+
+def create_all_data(perc):
     print("Generating TRAIN data...")
     X_train, Y_train = create_data('./../train.npy', perc)
-    
-    return X_train, Y_train
 
-def create_test_data(perc):
     print("Generating TEST data...")
     X_test, Y_test = create_data('./../test.npy', perc)
-    
-    return X_test, Y_test
 
-def create_validation_data(perc):
     print("Generating VALIDATION data...")
     X_validation, Y_validation = create_data('./../validation.npy', perc)
-    
-    return X_validation, Y_validation
+
+    X_total = np.concatenate((X_train, X_validation, X_test), axis = 0)
+    X_total_norm = normalize(X_total)
+
+    X_train_norm = X_total_norm[0:len(X_train)]
+    X_validation_norm = X_total_norm[len(X_train):len(X_train) + len(X_validation)]
+    X_test_norm = X_total_norm[-len(X_test):]
+
+    return X_train_norm, Y_train, X_test_norm, Y_test, X_validation_norm, Y_validation
 
 def create_train_data_list(perc):
     print("Generating TRAIN data...")
@@ -209,3 +219,23 @@ def create_validation_data_list(perc):
     validation_list = create_data_list('./../validation.npy', perc)
     
     return validation_list
+
+def create_train_data(perc):
+    print("Generating TRAIN data...")
+    X_train, Y_train = create_data('./../train.npy', perc)
+    
+    return X_train, Y_train
+
+def create_test_data(perc):
+    print("Generating TEST data...")
+    X_test, Y_test = create_data('./../test.npy', perc)
+    
+    return X_test, Y_test
+
+def create_validation_data(perc):
+    print("Generating VALIDATION data...")
+    X_validation, Y_validation = create_data('./../validation.npy', perc)
+    
+    return X_validation, Y_validation
+
+
