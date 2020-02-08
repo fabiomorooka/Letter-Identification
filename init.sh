@@ -3,7 +3,7 @@
 
 echo "Start executing algorithms to create the dataset..."
 cd ./EMNINST/
-python ./generateDatabase.py 80
+python ./generateDatabase.py
 echo "Deleted validation database!"
 
 echo "Creating rotated photo letters..."

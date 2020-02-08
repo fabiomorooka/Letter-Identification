@@ -24,7 +24,7 @@
 # SOFTWARE.
 
 # code:
-import scipy.spatial.distance as dist
+import scipy.spatial.distance as distLib
 from math import sqrt
 import numpy as np
 
@@ -34,11 +34,8 @@ import numpy as np
 # - row1 and row2: vectors of numbers that represent the object to be calculated
 # Return:
 # - The euclidean distance
-def euclidean_distance(row1, row2):
-    A = np.asarray(row1)
-    B = np.asarray(row2)
-    
-    return dist.euclidean(A, B)
+def euclidean_distance(row1, row2):   
+    return dist.euclidean(row1, row2)
 
 # Function to calculate the Manhattan distance between two vectors
 #
@@ -48,10 +45,7 @@ def euclidean_distance(row1, row2):
 # Return:
 # - The manhattan distance
 def manhattan_distance(row1, row2):
-    A = np.asarray(row1)
-    B = np.asarray(row2)
-
-    return dist.cityblock(A, B) 
+    return dist.cityblock(row1, row2) 
 
 # Function that calculates the N neighbors closer to a specific object that will be classified
 #
@@ -67,9 +61,9 @@ def get_neighbors(dataset, line, num_neighbors = 5, norm = 'l2'):
     distances = list()
     for row in dataset:
         if norm == 'l1':
-            dist = manhattan_distance(line, row)
+            dist = distLib.cityblock(line, row)
         elif norm == 'l2':
-            dist = euclidean_distance(line, row)
+            dist = distLib.euclidean(line, row)
         distances.append((row, dist))
     distances.sort(key=lambda tup: tup[1])
     neighbors = list()
