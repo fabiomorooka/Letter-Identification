@@ -107,7 +107,7 @@ def sobel(image):
   
     return [mag,ang]
 
-# Anohter function to compute feature values
+# Another function to compute feature values
 def pixel_count(image):
     pc_x = np.zeros(len(image))
     pc_y = np.zeros(len(image))
@@ -184,7 +184,7 @@ def create_data_list(filename, perc):
 
     return data_set
 
-#Function that normalize the features
+# Function that normalize the features
 def normalize(arr):
     max_line = np.max(arr, axis=0)
     min_line = np.min(arr, axis=0)
@@ -255,7 +255,7 @@ def create_validation_data(perc):
     
     return X_validation, Y_validation
 
-# This is an auxliary function to join two information of the data into an array
+# This is an auxiliary function to join two information of the data into an array
 def join_data(X_data, Y_data):
     new_array = []
     if len(X_data) == len(Y_data):
