@@ -63,11 +63,3 @@ The file "knn_app.ipynb" takes the database of photos created and makes the clas
 The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the Decision Tree classification model.
 
 The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the Random Forest classification model.
-
-#---------------------------------------------------------ATENTION!--------------------------------------------
-
-# Before using the github project, please run the bash executable "remove.sh" located in the main folder! 
-
-#--------------------------------------------------------------------------------------------------------------
-
-
