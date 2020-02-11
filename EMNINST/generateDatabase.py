@@ -92,7 +92,7 @@ def randomizeDataset(imagesList):
 
     return ds
 
-# This function deparete a dataset in two: the train dataset and the validation dataset.
+# This function separate a dataset in two: the train dataset and the validation dataset.
 def separeteDatasets(dataset):
     letters = range(1,27)
     classesTest_size = []
@@ -170,7 +170,7 @@ def separeteDatasets(dataset):
     np.save('./../validation', ds_validation.to_numpy())
     print("--------------------------------------------------------\n")
 
-# This function deparete a dataset in two: the train dataset and the validation dataset.
+# This function separate a dataset in two: the train dataset and the validation dataset.
 def reduceDataset(dataset, filter_coef):
     letters = range(1,27)
     classesTest_size = []
