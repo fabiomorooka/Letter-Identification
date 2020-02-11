@@ -61,9 +61,9 @@ def get_neighbors(dataset, line, num_neighbors = 5, norm = 'l2'):
     distances = list()
     for row in dataset:
         if norm == 'l1':
-            dist = manhattan_distance(line, row)
+            dist = manhattan_distance(line[:-1], row[:-1])
         elif norm == 'l2':
-            dist = euclidean_distance(line, row)
+            dist = euclidean_distance(line[:-1], row[:-1])
         distances.append((row, dist))
     distances.sort(key=lambda tup: tup[1])
     neighbors = list()
@@ -85,8 +85,10 @@ def get_neighbors(dataset, line, num_neighbors = 5, norm = 'l2'):
 def predict_classification(dataset, line, num_neighbors, norm):
     neighbors = get_neighbors(dataset, line, num_neighbors, norm)
     output_values = [row[-1] for row in neighbors]
-    prediction = max(set(output_values), key=output_values.count)
-    
+    if len(set(output_values)) == len(output_values):
+        prediction = output_values[0]
+    else:
+        prediction = max(set(output_values), key=output_values.count)    
     return prediction
 
 # Function that predict a set of objects.

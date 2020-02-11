@@ -255,4 +255,14 @@ def create_validation_data(perc):
     
     return X_validation, Y_validation
 
+# This is an auxliary function to join two information of the data into an array
+def join_data(X_data, Y_data):
+    new_array = []
+    if len(X_data) == len(Y_data):
+        for i in range(len(X_data)):
+            line = np.asarray(X_data[i]).reshape(-1).tolist()
+            line.append(Y_data[i])
+            
+            new_array.append(line)
 
+    return np.asarray(new_array)
