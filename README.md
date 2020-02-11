@@ -50,24 +50,24 @@ The "main.ipynb" file in the "createdAlgorithm" folder analyse the knn classific
 
 ### 3.2. Comparing results with the classifiers from scikit-learn
 
-#### The file "knn.ipynb" analyse just the KNN algorithm, its purpose is to analyse its hyperparameter to chose the best hyperparameter value and use it to classify the handwritten letters.
+The file "knn.ipynb" analyse just the KNN algorithm, its purpose is to analyse its hyperparameter to chose the best hyperparameter value and use it to classify the handwritten letters.
 
-#### The file "decisionTree.ipynb" analyse just the Decision Tree algorithm, its purpose is to analyse i#ts hyperparameter to chose the best hyperparameter value and use it to classify the handwritten letters.
+The file "decisionTree.ipynb" analyse just the Decision Tree algorithm, its purpose is to analyse i#ts hyperparameter to chose the best hyperparameter value and use it to classify the handwritten letters.
 
-#### The file "randomForest.ipynb" analyse just the Random Forest algorithm, its purpose is to analyse its hyperparameter to chose the best hyperparameter value and use it to classify the handwritten letters.
+The file "randomForest.ipynb" analyse just the Random Forest algorithm, its purpose is to analyse its hyperparameter to chose the best hyperparameter value and use it to classify the handwritten letters.
 
 ### 3.3. Using the simple application developped that classify a photo taken by the webcam
 
-#### The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the KNN classification model.
+The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the KNN classification model.
 
-#### The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the Decision Tree classification model.
+The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the Decision Tree classification model.
 
-#### The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the Random Forest classification model.
+The file "knn_app.ipynb" takes the database of photos created and makes the classification of each photo. For doing so it uses the Random Forest classification model.
 
-------------------------------------------------------ATENTION!----------------------------------------
+#---------------------------------------------------------ATENTION!--------------------------------------------
 
-Before using the github project, please run the bash executable "remove.sh" located in the main folder! 
+# Before using the github project, please run the bash executable "remove.sh" located in the main folder! 
 
--------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------
 
 
