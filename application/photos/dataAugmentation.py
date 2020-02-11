@@ -40,6 +40,7 @@ import math
 import string
 from scipy import ndimage
 
+# This function verify if a file exists and if so it will remove it.
 def remove_file(filename):
     if os.path.isfile(filename):
         print("Removing " + filename)
@@ -145,6 +146,7 @@ def image_Processing(path, image_name, show):
     
     return dilation
 
+# This function rotates an iamge
 def rotate_images(degree):
 
     print("Creating more images with a rotation of " + str(degree) + " degrees...")
@@ -179,55 +181,25 @@ def rotate_images(degree):
 
     return ds_test
 
+# This function randomize a dataset
 def random_dataset(source_df):
     alphabet_numbers = range(1, 27)
     
-    #print("Percentage of the trainset: " + str(perc1))
-    #print("Percentage of the testset: " + str(perc2))
-    #print("Percentage of the validationset: " + str(1-perc1-perc2) + "\n")
-
     for number in alphabet_numbers:
         dn = source_df.loc[source_df[784] == number]
-        #train_numbers = int(math.ceil(len(dn) * perc1))
-        #test_numbers = int(math.ceil(len(dn) * perc2))
-        #validation_numbers = len(dn) - train_numbers - test_numbers
 
-        #if validation_numbers <= 0:
-        #    validation_numbers = 1
-
-        #df_percTrain = dn.head(train_numbers)
-        #df_percValidation = dn[(train_numbers):(train_numbers + validation_numbers)]
-        #df_percTest = dn.tail(test_numbers)
         if number == 1:
             df_train = dn 
-        #    df_test = df_percTest
-        #    df_validation = df_percValidation
         else:
             df_train = df_train.append(dn)
-        #    df_test = df_test.append(df_percTest)
-        #    df_validation = df_validation.append(df_percValidation)
 
     ds_train = df_train.sample(frac=1).reset_index(drop = True)
-    #ds_test = df_test.sample(frac=1).reset_index(drop = True) 
-    #ds_validation = df_validation.sample(frac=1).reset_index(drop = True)  
- 
+    
     remove_file('test_photos.npy')
     print("Creating test photos database\n")
     np.save('test_photos',ds_train.to_numpy())
 
-    #remove_file('test.npy')
-    #print("Creating test database\n")
-    #np.save('test',ds_test.to_numpy())
-    
-    #remove_file('validation.npy')
-    #print("Creating validation database\n")
-    #np.save('validation',ds_validation.to_numpy())
-    
-    # Save in a csv file, used before
-    # ds_train.to_csv('training_database.csv', header = None, index = False)
-    # ds_test.to_csv('testing_database.csv', header = None, index = False)
-    # ds_validation.to_csv('validation_database.csv', header = None, index = False)
-
+# This is the main of the program, it makes some verification then generates all dataset of photos
 def main(argv):
     # degree: the step of the rotation
     # the images will be create in the folder with their originals
@@ -246,5 +218,6 @@ def main(argv):
 
     print("Finished creating databases!")
 
+# Main called when called the file
 if __name__ == "__main__":
     main(sys.argv[1:])

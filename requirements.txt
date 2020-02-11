@@ -1,0 +1,13 @@
+####### requirements.txt #######
+#This is a requirement file for new users of python"
+numpy==1.16.6
+pandas==0.24.2
+zipp==0.6.0
+matplotlib==2.2.4
+imageio==2.6.1
+imgaug==0.3.0
+opencv-python==4.1.2.30
+opencv-python-headless==4.1.2.30
+scikit-learn==0.17.1
+scipy==1.2.3
+#

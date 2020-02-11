@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # generateDatabase.py --- Reading binary EMNIST files algorithm
 
-# Copyright (c) 2011-2016  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
+# Copyright (c) 2019-2020 Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -93,41 +93,59 @@ def randomizeDataset(imagesList):
     return ds
 
 # This function deparete a dataset in two: the train dataset and the validation dataset.
-def separeteDatasets(dataset, perc, filter_coef):
+def separeteDatasets(dataset):
     letters = range(1,27)
+    classesTest_size = []
     classesTrain_size = []
     classesValidation_size = []
 
-    print("Percentage of the trainset: " + str(perc))
-    print("Percentage of the validationset: " + str(1-perc))
+    filter_coef = 0.125      # This is a coefficient to aquire less classes from the database
 
-    for letter in letters:
-        dl = dataset.loc[dataset[784] == letter]
+    for num in letters:
+        dl = dataset.loc[dataset[784] == num]
 
         total_length = int(len(dl) * filter_coef)
 
-        train_letters = int(math.ceil(total_length * perc))
-        validation_letters = total_length - train_letters
+        test_numbers = int(0.2 * total_length)
+        train_numbers = int(0.64 * total_length)
+        validation_numbers = int(0.16 * total_length)
 
-        classesTrain_size.append(train_letters)
-        classesValidation_size.append(validation_letters)
+        classesTest_size.append(test_numbers)
+        classesTrain_size.append(train_numbers)
+        classesValidation_size.append(validation_numbers)
 
-
-        df_percTrain = dl.head(train_letters)
-        df_percValidation = dl.tail(validation_letters)
+        df_percTest = dl.head(test_numbers)
+        df_percTrain = dl[test_numbers:total_length-validation_numbers]
+        df_percValidation = dl.tail(validation_numbers)
         
-        if letter == 1:
+        if num == 1:
+            df_test = df_percTest
             df_train = df_percTrain
             df_validation = df_percValidation
         else:
+            df_test = df_test.append(df_percTest)
             df_train = df_train.append(df_percTrain)
             df_validation = df_validation.append(df_percValidation)
 
+    ds_test = df_test.sample(frac=1).reset_index(drop = True)
     ds_train = df_train.sample(frac=1).reset_index(drop = True) 
     ds_validation = df_validation.sample(frac=1).reset_index(drop = True)  
     
+    print("------------------[TEST DATASET]-----------------------")
+    print("Number of numbers in the testset: " + str(len(ds_test)))
+    balance_test = len(set(classesTest_size))
+    if balance_test == 1:
+        print("\nClasses are BALANCED!, with " + str(classesTest_size[0]) + " sample for class\n")
+    else:
+        print("\nClasses are UNBALANCED!\n")    
+
+    remove_file('./../test.npy')
+    print("Created test database")
+    np.save('./../test', ds_test.to_numpy())
+    print("--------------------------------------------------------\n")
+
     print("------------------[TRAIN DATASET]-----------------------")
-    print("Number of letters in the trainset: " + str(len(df_train)))
+    print("Number of numbers in the trainset: " + str(len(ds_train)))
     balance_train = len(set(classesTrain_size))
     if balance_train == 1:
         print("\nClasses are BALANCED!, with " + str(classesTrain_size[0]) + " sample for class\n")
@@ -135,12 +153,12 @@ def separeteDatasets(dataset, perc, filter_coef):
         print("\nClasses are UNBALANCED!\n")    
 
     remove_file('./../train.npy')
-    print("Creating train database\n")
+    print("Created train database")
     np.save('./../train', ds_train.to_numpy())
-    print("--------------------------------------------------------")
+    print("--------------------------------------------------------\n")
     
     print("------------------[VALIDATION DATASET]------------------")
-    print("Number of letters in the validationset: " + str(len(df_validation)))
+    print("Number of numbers in the validationset: " + str(len(ds_validation)))
     balance_validation = len(set(classesValidation_size))
     if balance_validation == 1:
         print("\nClasses are BALANCED!, with " + str(classesValidation_size[0]) + " sample for class\n")
@@ -148,9 +166,9 @@ def separeteDatasets(dataset, perc, filter_coef):
         print("\nClasses are UNBALANCED!\n")
 
     remove_file('./../validation.npy')
-    print("Creating validation database")
+    print("Created validation database")
     np.save('./../validation', ds_validation.to_numpy())
-    print("--------------------------------------------------------")
+    print("--------------------------------------------------------\n")
 
 # This function deparete a dataset in two: the train dataset and the validation dataset.
 def reduceDataset(dataset, filter_coef):
@@ -188,7 +206,7 @@ def reduceDataset(dataset, filter_coef):
     print("--------------------------------------------------------")
 
 #--------------------------------------------------------------------------------------------
-
+# This is the class used to each letter
 class Letter:
     def __init__(self, data, target):
         self.target = target
@@ -235,6 +253,7 @@ class Letter:
         plt.matshow(self.image) 
         plt.show()
 
+# This is the sobel function just to compute some features values
 def sobel(image):
     w = len(image)
     kernel_x = np.array([ [ 1, 0,-1],
@@ -262,6 +281,7 @@ def sobel(image):
   
     return [mag,ang]
 
+# Anohter function to compute feature values
 def pixel_count(image):
     pc_x = np.zeros(len(image))
     pc_y = np.zeros(len(image))
@@ -273,6 +293,7 @@ def pixel_count(image):
 
     return [pc_x, pc_y]
 
+# A dataset class that contains all class letters
 class Dataset:
     def __init__(self, array, length):  
         self.array = array
@@ -288,11 +309,13 @@ class Dataset:
             letters.append(Letter(np.array(row[:-1]), row[-1]))
         return letters
 
+# This function created the class Dataset 
 def load_data_set(array):
     dataset = Dataset(array, len(array))
     
     return dataset
 
+# This function converts and obj (letter) into a numpy array
 def cvt_obj_nparray(dataset):
     X = np.zeros((dataset.length, 12))
     Y = np.zeros((dataset.length,))
@@ -302,6 +325,7 @@ def cvt_obj_nparray(dataset):
             X[i, j] = letter.features[feature]
     return X, Y
 
+# This function created the Xdata and Ydata (label) used in classifiers
 def create_data_file(filename):
     #Load the database (.npy) files 
     img_array = np.load(filename) 
@@ -314,6 +338,7 @@ def create_data_file(filename):
 
     return X_array, Y_array
 
+# This function created a list of classes (letters)
 def create_data_list(filename):
     #Load the database (.npy) files 
     img_array = np.load(filename) 
@@ -324,7 +349,7 @@ def create_data_list(filename):
 
     return data_set
 
-#Function that normalize the features
+# This function normalize the features
 def normalize(arr):
     max_line = np.max(arr, axis=0)
     min_line = np.min(arr, axis=0)
@@ -333,11 +358,11 @@ def normalize(arr):
     
     return arr
 
+# This is the main function that creates the datasets
 def create_dataset():
     # Initialization of the variables.
     nTrain = 124800  # By default the number of lines will be the maximum one
     nTest = 20800    # By default the number of lines will be the maximum one 
-    coef = 0.0625      # This is a coefficient to aquire less classes from the database
 
     EMNIST_zip_file = "./emnist-letters.zip"
     final_folder = "./emnist-letters"
@@ -355,36 +380,26 @@ def create_dataset():
         unzipEMNIST(final_folder)
         print("Finished unzipping file\n")
         
-    # Verifiy if the percentage passed in the first argument is a good argument.
-    proportion_trainset = 80
-    while(float(proportion_trainset) <= 0):
-        print("\nPercentage must be positive!")
-        proportion_trainset = raw_input('Try again: how much do you want to use as trainset?\n')  
-    
-    if float(proportion_trainset) > 1:
-        print("Converting in percentage...")
-        proportion_trainset = (float(proportion_trainset) / 100)
-        print("Proportion is: " + str(proportion_trainset) + " \n")
-    elif float(proportion_trainset) >= 0 and float(proportion_trainset) <= 1:
-        pass
-
     # Create the train dataset and validation dataset 
     print("Creating train and validation dataset with " + str(nTrain) + " letters...\n")
     train_list = readBinaryFile(train_images_file, train_labels_file, nTrain)
     train_df = randomizeDataset(train_list)
-    separeteDatasets(train_df, float(proportion_trainset), coef)
 
     # Creating the test  
     print("Creating test with " + str(nTest) + " letters...\n")
     test_list = readBinaryFile(test_images_file, test_labels_file, nTest)
     test_df = randomizeDataset(test_list)
-    reduceDataset(test_df, coef) 
+
+    df = train_df.append(test_df)
+    separeteDatasets(df)
+    #reduceDataset(test_df, coef) 
        
     # Delete all binary unzipped files to reduce the size of the project
     print("Deleting folder with all binary files...")
     remove_folder(final_folder)
     print("Folder deleted!\n")
 
+# This is an auxliar function to join the Xdata and Ydata into a pandas dataframe
 def join_data(X_data, Y_data):
     new_array = []
     if len(X_data) == len(Y_data):
@@ -396,6 +411,7 @@ def join_data(X_data, Y_data):
 
     return pd.DataFrame(new_array)
 
+# This function creates all data used in the classifier
 def create_all_data():
     create_dataset()
     print("Generating TRAIN data...")
@@ -413,6 +429,18 @@ def create_all_data():
     X_train_norm = X_total_norm[0:len(X_train)]
     X_validation_norm = X_total_norm[len(X_train):len(X_train) + len(X_validation)]
     X_test_norm = X_total_norm[-len(X_test):]
+
+    print("TRAIN INFO")
+    print(np.asarray(X_train_norm).shape)
+    print(np.asarray(Y_train).shape)
+    print("TEST INFO")
+    print(np.asarray(X_test_norm).shape)
+    print(np.asarray(Y_test).shape)
+    print("VALIDATION INFO")
+    print(np.asarray(X_validation_norm).shape)
+    print(np.asarray(Y_validation).shape)
+
+
 
     df_test = join_data(X_test_norm, Y_test)
     df_train = join_data(X_train_norm, Y_train)
@@ -432,6 +460,7 @@ def create_all_data():
 
     #return X_train_norm, Y_train, X_test_norm, Y_test, X_validation_norm, Y_validation
 
+# This function is function to create the list of objects (using train data)
 def create_train_data_list():
     create_dataset()
     print("Generating TRAIN data...")
@@ -439,6 +468,7 @@ def create_train_data_list():
     
     return train_list
 
+# This function is function to create the list of objects (using test data)
 def create_test_data_list():
     create_dataset()
     print("Generating TEST data...")
@@ -446,6 +476,7 @@ def create_test_data_list():
     
     return test_list
 
+# This function is function to create the list of objects (using validation data)
 def create_validation_data_list():
     create_dataset()
     print("Generating VALIDATION data...")
@@ -453,6 +484,7 @@ def create_validation_data_list():
     
     return validation_list
 
+# This function is function to create the data used in classifier (using train data)
 def create_train_data():
     create_dataset()
     print("Generating TRAIN data...")
@@ -460,6 +492,7 @@ def create_train_data():
     
     return X_train, Y_train
 
+# This function is function to create the data used in classifier (using test data)
 def create_test_data():
     create_dataset()
     print("Generating TEST data...")
@@ -467,6 +500,7 @@ def create_test_data():
     
     return X_test, Y_test
 
+# This function is function to create the data used in classifier (using validation data)
 def create_validation_data():
     create_dataset()
     print("Generating VALIDATION data...")
@@ -478,6 +512,7 @@ def create_validation_data():
 def main():
     create_all_data()
 
+# Function used when call the file python
 if __name__ == "__main__":
     main()
 

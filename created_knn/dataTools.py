@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # dataTools.py --- Reading binary EMNIST files algorithm
 
-# Copyright (c) 2011-2016  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
+# Copyright (c) 2019-2020  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,6 +30,9 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
+# The onjetive of this python file is to declare function that may be important in the jupyter notebook
+
+# This is the class used to each letter
 class Letter:
     def __init__(self, data, target):
         self.target = target
@@ -76,6 +79,7 @@ class Letter:
         plt.matshow(self.image) 
         plt.show()
 
+# This is the sobel function just to compute some features values
 def sobel(image):
     w = len(image)
     kernel_x = np.array([ [ 1, 0,-1],
@@ -103,6 +107,7 @@ def sobel(image):
   
     return [mag,ang]
 
+# Anohter function to compute feature values
 def pixel_count(image):
     pc_x = np.zeros(len(image))
     pc_y = np.zeros(len(image))
@@ -114,6 +119,7 @@ def pixel_count(image):
 
     return [pc_x, pc_y]
 
+# A dataset class that contains all class letters
 class Dataset:
     def __init__(self, array, length):  
         self.array = array
@@ -129,12 +135,14 @@ class Dataset:
             letters.append(Letter(np.array(row[:-1]), row[-1]))
         return letters
 
+# This function created the class Dataset 
 # n : percent of the number of lines in the data base use as array set
 def load_data_set(array, n):
     dataset = Dataset(array[:int(n * len(array))], int(n * len(array)))
     
     return dataset
 
+# This function converts and obj (letter) into a numpy array
 def cvt_obj_nparray(dataset):
     X = np.zeros((dataset.length, 12))
     Y = np.zeros((dataset.length,))
@@ -144,6 +152,7 @@ def cvt_obj_nparray(dataset):
             X[i, j] = letter.features[feature]
     return X, Y
 
+# This function created the Xdata and Ydata (label) used in classifiers
 def create_data(filename, perc):
     #Load the database (.npy) files 
     img_array = np.load(filename) 
@@ -162,6 +171,7 @@ def create_data(filename, perc):
 
     return X_array, Y_array
 
+# This function created a list of classes (letters)
 def create_data_list(filename, perc):
     #Load the database (.npy) files 
     img_array = np.load(filename) 
@@ -183,6 +193,7 @@ def normalize(arr):
     
     return arr
 
+# This is the main function that creates the datasets
 def create_all_data(perc):
     print("Generating TRAIN data...")
     X_train, Y_train = create_data('./../train.npy', perc)
@@ -202,36 +213,42 @@ def create_all_data(perc):
 
     return X_train_norm, Y_train, X_test_norm, Y_test, X_validation_norm, Y_validation
 
+# This function is function to create the list of objects (using train data)
 def create_train_data_list(perc):
     print("Generating TRAIN data...")
     train_list = create_data_list('./../train.npy', perc)
     
     return train_list
 
+# This function is function to create the list of objects (using test data)
 def create_test_data_list(perc):
     print("Generating TEST data...")
     test_list = create_data_list('./../test.npy', perc)
     
     return test_list
 
+# This function is function to create the list of objects (using validation data)
 def create_validation_data_list(perc):
     print("Generating VALIDATION data...")
     validation_list = create_data_list('./../validation.npy', perc)
     
     return validation_list
 
+# This function is function to create the data used in classifier (using train data)
 def create_train_data(perc):
     print("Generating TRAIN data...")
     X_train, Y_train = create_data('./../train.npy', perc)
     
     return X_train, Y_train
 
+# This function is function to create the data used in classifier (using test data)
 def create_test_data(perc):
     print("Generating TEST data...")
     X_test, Y_test = create_data('./../test.npy', perc)
     
     return X_test, Y_test
 
+# This function is function to create the data used in classifier (using validation data)
 def create_validation_data(perc):
     print("Generating VALIDATION data...")
     X_validation, Y_validation = create_data('./../validation.npy', perc)

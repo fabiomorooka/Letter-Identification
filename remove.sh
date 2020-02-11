@@ -37,7 +37,7 @@ else
 	echo "Validation database does not exist!"
 fi
 
-#Next, we delete the classes files
+# Next, we delete the classes files
 
 train_classes_file=./train_classes.npy
 test_classes_file=./test_classes.npy

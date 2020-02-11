@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # knn.py --- K-Nearest Neighbours (KNN) algorithm
 
-# Copyright (c) 2011-2016  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
+# Copyright (c) 2019-2020  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,7 +35,7 @@ import numpy as np
 # Return:
 # - The euclidean distance
 def euclidean_distance(row1, row2):   
-    return dist.euclidean(row1, row2)
+    return distLib.euclidean(row1, row2)
 
 # Function to calculate the Manhattan distance between two vectors
 #
@@ -45,7 +45,7 @@ def euclidean_distance(row1, row2):
 # Return:
 # - The manhattan distance
 def manhattan_distance(row1, row2):
-    return dist.cityblock(row1, row2) 
+    return distLib.cityblock(row1, row2) 
 
 # Function that calculates the N neighbors closer to a specific object that will be classified
 #
@@ -61,9 +61,9 @@ def get_neighbors(dataset, line, num_neighbors = 5, norm = 'l2'):
     distances = list()
     for row in dataset:
         if norm == 'l1':
-            dist = distLib.cityblock(line, row)
+            dist = manhattan_distance(line, row)
         elif norm == 'l2':
-            dist = distLib.euclidean(line, row)
+            dist = euclidean_distance(line, row)
         distances.append((row, dist))
     distances.sort(key=lambda tup: tup[1])
     neighbors = list()
