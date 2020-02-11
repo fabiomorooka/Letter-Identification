@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # dataAugmentation.py --- Generating test for the classifier
 
-# Copyright (c) 2011-2016  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
+# Copyright (c) 2019-2020  Fabio Morooka <fabio.morooka@gmail.com> and Fernando Amaral <fernando.lucasaa@gmail.com>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -48,12 +48,15 @@ def remove_file(filename):
     else:
         print(filename + "file does not exist, creating one!")
 
-# Function to process the input image and returns a image in the format to be compare with the EMNIST database
+# Function to process the input image and return an image in the format to be compare with the EMNIST database
 #
 # Parameters:
 # - path: where the photo is located 
 # - image_name: name of the file
-# - show: variable to show the intermediates images created in the processing. 1 -> print images, 0 -> not print
+# - show: variable to show the intermediate images created in the processing. 1 -> print images, other value -> not print
+#
+# Return:
+# - image in the EMNIST format (28x28 and white letter and black background)
 
 def image_Processing(path, image_name, show):
     
@@ -95,21 +98,14 @@ def image_Processing(path, image_name, show):
         
     # ascending order list
     contours_areas_sorted = np.sort(contours_areas)
-    #print(contours_areas_sorted)
     
     # the image captured have two empty spaces, one in the top and another in the bottom,
     # so the two highest areas values is due to these spaces
     best_cnt_area = contours_areas_sorted[-3]
-    #print(best_cnt_area)
-    
     best_cnt = contours[contours_areas.index(best_cnt_area)]
-    #print(cv.contourArea(best_cnt))
 
     # compute the bounding box
     (x, y, w, h) = cv.boundingRect(best_cnt)
-
-    # affiche les rectangles sur l'image binaire
-    #cv.rectangle(binary, (x,y), (x+w,y+h), (255,255,0), 2) 
 
     # extract the region of interest (ROI) using the informations of the bounding box
     diceROI = binary[y-40 : y+h+40, x-40 : x+w+40] 
