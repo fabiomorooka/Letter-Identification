@@ -7,7 +7,7 @@ matplotlib==2.2.4
 imageio==2.6.1
 imgaug==0.3.0
 opencv-python==4.1.2.30
-opencv-python-headless==4.1.2.30
+opencv-python-headless==4.2.0.32
 scikit-learn==0.17.1
 scipy==1.2.3
 #
