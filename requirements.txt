@@ -1,6 +1,6 @@
 ####### requirements.txt #######
 #This is a requirement file for new users of python"
-numpy==1.16.6
+numpy==1.22.0
 pandas==0.24.2
 zipp==0.6.0
 matplotlib==2.2.4
